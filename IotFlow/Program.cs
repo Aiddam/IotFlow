@@ -63,11 +63,11 @@ builder.Services.AddDbContext<ServerContext>(options =>
 {
     if (builder.Environment.IsDevelopment())
     {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"));
+        options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionString"));
     }
     else
     {
-        options.UseSqlServer(builder.Configuration["SERVER_CONNECTION_STRING"]);
+        options.UseNpgsql(builder.Configuration["SERVER_CONNECTION_STRING"]);
     }
 });
 
