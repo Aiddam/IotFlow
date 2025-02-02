@@ -1,5 +1,4 @@
-﻿
-using Autofac;
+﻿using Autofac;
 
 namespace IotFlow.DataAccess
 {

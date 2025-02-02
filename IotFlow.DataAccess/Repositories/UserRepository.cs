@@ -29,5 +29,6 @@ namespace IotFlow.DataAccess.Repositories
         {
             return await _dbSet
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
-        }    }
+        }
+    }
 }

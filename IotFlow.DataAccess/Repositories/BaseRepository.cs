@@ -30,9 +30,9 @@ namespace IotFlow.DataAccess.Repositories
 
         public virtual async Task<IEnumerable<T>> ReadEntitiesByPredicate(Expression<Func<T, bool>> predicate, IEnumerable<KeyValuePair<Expression<Func<T, object>>, bool>>? orderBy = null, CancellationToken cancellationToken = default)
         {
-            var query = _dbSet.Where(predicate);
+            IQueryable<T> query = _dbSet.Where(predicate);
 
-            if (orderBy is not null)
+            if (orderBy is not null && orderBy.Any())
             {
                 foreach (var order in orderBy)
                 {
@@ -45,12 +45,13 @@ namespace IotFlow.DataAccess.Repositories
 
         public virtual async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
         {
-            var oldEntity = await ReadEntityByIdAsync(entity.Id, cancellationToken);
+            var existingEntity = await ReadEntityByIdAsync(entity.Id, cancellationToken);
 
-            if (oldEntity is null) return entity;
+            if (existingEntity is null) return entity;
 
-            var oldEntityEntry = _context.Entry(oldEntity)!;
+            var oldEntityEntry = _context.Entry(existingEntity)!;
             oldEntityEntry.CurrentValues.SetValues(entity);
+
             await _context.SaveChangesAsync(cancellationToken);
             return entity;
         }

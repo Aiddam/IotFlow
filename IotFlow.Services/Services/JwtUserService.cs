@@ -9,7 +9,6 @@ using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using IotFlow.Utilities;
 using IotFlow.Models.ClaimNames;
-using System.Threading;
 
 namespace IotFlow.Services
 {
