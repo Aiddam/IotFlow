@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IotFlow.Interfaces\IotFlow.Abstractions.csproj" />
+    <ProjectReference Include="..\IotFlow.Models\IotFlow.Models.csproj" />
+    <ProjectReference Include="..\IotFlow.Utilities\IotFlow.Utilities.csproj" />
+  </ItemGroup>
+
+</Project>
