@@ -12,7 +12,7 @@ using IotFlow.Models.ClaimNames;
 
 namespace IotFlow.Services
 {
-    public class JwtUserService : IUserService<JwtUserDto, RegisterUser, LoginUser, RefreshUser>
+    public class JwtUserService : IUserService<JwtUserDto, RegisterUser, LoginUser, RefreshUser, JwtUserInfoDto>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IJwtTokenHandler _tokenHandler;
@@ -136,7 +136,7 @@ namespace IotFlow.Services
                 new Claim(UserClaimName.Name, user.Name),
                 new Claim(UserClaimName.Id, user.Id.ToString())
             };
-
+            
             return _tokenHandler.CreateAccessToken(claims);
         }
 
@@ -148,6 +148,21 @@ namespace IotFlow.Services
             };
 
             return _tokenHandler.CreateRefreshToken(claims);
+        }
+        public async Task<JwtUserInfoDto> GetUserInfoAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            var userRepository = await _unitOfWork.GetRepository<User>();
+            User? user = await userRepository.ReadEntityByIdAsync(userId, cancellationToken);
+            if (user == null)
+            {
+                throw new ArgumentException("User not found");
+            }
+            return new JwtUserInfoDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email
+            };
         }
     }
 }

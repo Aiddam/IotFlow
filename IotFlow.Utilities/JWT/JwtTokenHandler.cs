@@ -47,20 +47,22 @@ namespace IotFlow.Utilities.JWT
             return token;
         }
 
-        public ClaimsPrincipal ValidateToken(string strToken)
+        public ClaimsPrincipal ValidateToken(string strToken, bool isRefreshToken = false)
         {
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
 
+            string secret = isRefreshToken ? _jwtConfiguration.RefreshSecretCode : _jwtConfiguration.AccessSecretCode;
+
             var validationParameters = new TokenValidationParameters()
             {
-                IssuerSigningKey =
-                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtConfiguration.AccessSecretCode)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret)),
                 ValidateAudience = false,
                 ValidateIssuer = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
             };
 
             SecurityToken token;
-
             ClaimsPrincipal cp = handler.ValidateToken(strToken, validationParameters, out token);
 
             return cp;

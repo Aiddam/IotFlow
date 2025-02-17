@@ -1,15 +1,17 @@
 ﻿using IotFlow.Abstractions.Interfaces.Services;
+using IotFlow.Models.ClaimNames;
 using IotFlow.Models.Constants;
 using IotFlow.Models.DTO.JWT;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IotFlow.Controllers
 {
     public class JwtAuthController : BaseController
     {
-        private readonly IUserService<JwtUserDto, RegisterUser, LoginUser, RefreshUser> _userService;
+        private readonly IUserService<JwtUserDto, RegisterUser, LoginUser, RefreshUser, JwtUserInfoDto> _userService;
 
-        public JwtAuthController(IUserService<JwtUserDto, RegisterUser, LoginUser, RefreshUser> userService)
+        public JwtAuthController(IUserService<JwtUserDto, RegisterUser, LoginUser, RefreshUser, JwtUserInfoDto> userService)
         {
             _userService = userService;
         }
@@ -64,6 +66,25 @@ namespace IotFlow.Controllers
             var response = new { checkStatus = doesNameOrEmailExist };
 
             return Ok(response);
+        }
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<ActionResult<JwtUserInfoDto>> Me()
+        {
+            var userClaims = HttpContext.User;
+            if (userClaims == null || !userClaims.Identity?.IsAuthenticated == true)
+            {
+                return Unauthorized();
+            }
+
+            bool successful = int.TryParse(userClaims.FindFirst(UserClaimName.Id)?.Value, out int userId);
+            if (!successful)
+            {
+                return Unauthorized("Invalid token.");
+            }
+
+            JwtUserInfoDto userInfo = await _userService.GetUserInfoAsync(userId);
+            return Ok(userInfo);
         }
 
         private JwtOnlyTokenDto ProcessUser(JwtUserDto user)

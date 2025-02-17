@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Builder;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,15 +50,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //Auth
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters()
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        ValidateAudience = false,
-        ValidateIssuer = false,
-        ValidateLifetime = true,
-    };
-});
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["JWT:AccessSecretCode"]!))
+        };
+    });
 builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<ServerContext>(options =>
@@ -93,6 +98,7 @@ builder.Services.Configure<JwtConfiguration>(jwtConfigurations =>
         jwtConfigurations.RefreshSecretCode = builder.Configuration["JWT_REFRESH_SECRET_CODE"]!;
     }
 });
+builder.WebHost.UseUrls("http://0.0.0.0:5000");
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -100,11 +106,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
-app.UseHttpsRedirection();
+app.UseCors("DevCorsPolicy");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -7,6 +7,6 @@ namespace IotFlow.Abstractions.Interfaces.JWT
     {
         JwtSecurityToken CreateAccessToken(List<Claim> claims);
         JwtSecurityToken CreateRefreshToken(List<Claim> claims);
-        ClaimsPrincipal ValidateToken(string token);
+        ClaimsPrincipal ValidateToken(string token, bool isRefrestToken = false);
     }
 }
