@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Builder;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -99,6 +98,7 @@ builder.Services.Configure<JwtConfiguration>(jwtConfigurations =>
     }
 });
 builder.WebHost.UseUrls("http://0.0.0.0:5000");
+builder.Services.AddAutoMapper(typeof(Program));
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
