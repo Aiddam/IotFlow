@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.2.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
@@ -26,6 +27,7 @@
     <ProjectReference Include="..\IotFlow.Services\IotFlow.Services.csproj" />
     <ProjectReference Include="..\IotFlow.Utilities\IotFlow.Utilities.csproj" />
     <ProjectReference Include="..\IotFlow.Models\IotFlow.Models.csproj" />
+    <ProjectReference Include="..\IotFlow.Adapters\IotFlow.Adapters.csproj" />
   </ItemGroup>
 
 </Project>
