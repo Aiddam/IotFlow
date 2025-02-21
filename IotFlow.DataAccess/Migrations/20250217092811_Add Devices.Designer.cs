@@ -3,6 +3,7 @@ using System;
 using IotFlow.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IotFlow.DataAccess.Migrations
 {
     [DbContext(typeof(ServerContext))]
-    partial class ServerContextModelSnapshot : ModelSnapshot
+    [Migration("20250217092811_Add Devices")]
+    partial class AddDevices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,14 +46,9 @@ namespace IotFlow.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasAlternateKey("DeviceGuid");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Devices");
                 });
@@ -62,9 +60,6 @@ namespace IotFlow.DataAccess.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
 
                     b.Property<int>("DeviceId")
                         .HasColumnType("integer");
@@ -89,9 +84,6 @@ namespace IotFlow.DataAccess.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DefaultValue")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<int>("DeviceMethodId")
@@ -148,17 +140,6 @@ namespace IotFlow.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("IotFlow.Models.DB.Device", b =>
-                {
-                    b.HasOne("IotFlow.Models.DB.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("IotFlow.Models.DB.DeviceMethod", b =>

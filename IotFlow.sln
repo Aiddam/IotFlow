@@ -3,17 +3,26 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IotFlow", "IoTFlow\IotFlow.csproj", "{21EDC39A-DA99-4473-9F2F-D66FA9AD1C74}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IotFlow", "IoTFlow\IotFlow.csproj", "{21EDC39A-DA99-4473-9F2F-D66FA9AD1C74}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5567ECDB-C91C-4C96-AE00-ECD698FD8EDE} = {5567ECDB-C91C-4C96-AE00-ECD698FD8EDE}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IotFlow.Abstractions", "IotFlow.Interfaces\IotFlow.Abstractions.csproj", "{782BA0F4-9EEF-4B85-8788-DAF16B75706A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IotFlow.Abstractions", "IotFlow.Interfaces\IotFlow.Abstractions.csproj", "{782BA0F4-9EEF-4B85-8788-DAF16B75706A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IotFlow.Models", "IotFlow.Models\IotFlow.Models.csproj", "{9BB3348C-DCFF-4B10-BC50-D90A5BE0BEB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IotFlow.Models", "IotFlow.Models\IotFlow.Models.csproj", "{9BB3348C-DCFF-4B10-BC50-D90A5BE0BEB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IotFlow.Services", "IotFlow.Services\IotFlow.Services.csproj", "{A7B9302C-4415-44A9-B02A-237D6EDCBBD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IotFlow.Services", "IotFlow.Services\IotFlow.Services.csproj", "{A7B9302C-4415-44A9-B02A-237D6EDCBBD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IotFlow.DataAccess", "IotFlow.DataAccess\IotFlow.DataAccess.csproj", "{A3B20E9C-5473-47DB-9412-5B41FC7CE5CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IotFlow.DataAccess", "IotFlow.DataAccess\IotFlow.DataAccess.csproj", "{A3B20E9C-5473-47DB-9412-5B41FC7CE5CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IotFlow.Utilities", "IotFlow.Utilities\IotFlow.Utilities.csproj", "{08DCEDA9-BAAB-4166-878E-427F94C5B230}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IotFlow.Utilities", "IotFlow.Utilities\IotFlow.Utilities.csproj", "{08DCEDA9-BAAB-4166-878E-427F94C5B230}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IotFlow.Adapters", "IotFlow.Adapters\IotFlow.Adapters.csproj", "{5567ECDB-C91C-4C96-AE00-ECD698FD8EDE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{782BA0F4-9EEF-4B85-8788-DAF16B75706A} = {782BA0F4-9EEF-4B85-8788-DAF16B75706A}
+		{9BB3348C-DCFF-4B10-BC50-D90A5BE0BEB7} = {9BB3348C-DCFF-4B10-BC50-D90A5BE0BEB7}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +54,10 @@ Global
 		{08DCEDA9-BAAB-4166-878E-427F94C5B230}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08DCEDA9-BAAB-4166-878E-427F94C5B230}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08DCEDA9-BAAB-4166-878E-427F94C5B230}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5567ECDB-C91C-4C96-AE00-ECD698FD8EDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5567ECDB-C91C-4C96-AE00-ECD698FD8EDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5567ECDB-C91C-4C96-AE00-ECD698FD8EDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5567ECDB-C91C-4C96-AE00-ECD698FD8EDE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

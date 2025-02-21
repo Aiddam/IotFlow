@@ -8,6 +8,7 @@ namespace IotFlow
         {
             IotFlow.DataAccess.DependencyInjector.Load(containerBuilder);
             IotFlow.Utilities.DependencyInjector.Load(containerBuilder);
+            IotFlow.Adapters.DependencyInjector.Load(containerBuilder);
             IotFlow.Services.DependencyInjector.Load(containerBuilder);
         }
     }

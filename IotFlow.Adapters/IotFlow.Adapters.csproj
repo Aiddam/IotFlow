@@ -8,13 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.2" />
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\IotFlow.Interfaces\IotFlow.Abstractions.csproj" />
     <ProjectReference Include="..\IotFlow.Models\IotFlow.Models.csproj" />
-    <ProjectReference Include="..\IotFlow.Utilities\IotFlow.Utilities.csproj" />
   </ItemGroup>
 
 </Project>
