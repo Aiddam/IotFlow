@@ -25,6 +25,14 @@ namespace IotFlow.DataAccess
 
             modelBuilder.Entity<Device>()
                 .HasAlternateKey(d => d.DeviceGuid);
+
+            modelBuilder.Entity<DeviceMethod>()
+                .Property(p => p.MethodType)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<DeviceMethodParameter>()
+                .Property(p => p.ParameterType)
+                .HasConversion<string>();
         }
     }
 }

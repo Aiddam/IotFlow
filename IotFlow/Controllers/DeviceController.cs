@@ -1,19 +1,15 @@
 ﻿using IotFlow.Abstractions.Interfaces.Services;
-using IotFlow.Models.DB;
 using IotFlow.Models.DTO.Devices;
-using IotFlow.Models.DTO.JWT;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration.UserSecrets;
-using System.Security.Claims;
 
 namespace IotFlow.Controllers
 {
     [Route("api/[controller]s")]
     public class DeviceController : BaseController
     {
-        private readonly IDeviceService<DeviceDto, RegisterDeviceDto, UpdateDeviceDto> _deviceService;
-        public DeviceController(IDeviceService<DeviceDto, RegisterDeviceDto, UpdateDeviceDto> deviceService)
+        private readonly IDeviceService<DeviceDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto> _deviceService;
+        public DeviceController(IDeviceService<DeviceDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto> deviceService)
         {
             _deviceService = deviceService;
         }
@@ -30,6 +26,24 @@ namespace IotFlow.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+        [Authorize, HttpGet("{deviceGuid}/exist")]
+        public async Task<IActionResult> IsExist(Guid deviceGuid, CancellationToken cancellationToken)
+        {
+            var userId = GetUserId();
+            try
+            {
+                var device = await _deviceService.GetDeviceByGuid(deviceGuid, userId, cancellationToken);
+                if(device != null)
+                {
+                    return Ok(true);
+                }
+                return Ok(false);
+            }
+            catch (Exception ex)
+            {
+                return Ok(false);
             }
         }
         [Authorize, HttpGet]
@@ -81,6 +95,35 @@ namespace IotFlow.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [Authorize, HttpPut("{deviceGuid}/set-device-alive")]
+        public async Task<ActionResult<DeviceAliveDto>> SetDeviceAlive(Guid deviceGuid, [FromBody] DeviceAliveDto updateDevice, CancellationToken cancellationToken)
+        {
+            var userId = GetUserId();
+
+            try
+            {
+                DeviceDto device = await _deviceService.SetDeviceAlive(deviceGuid, userId, updateDevice, cancellationToken);
+                return Ok(device);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Authorize, HttpPost("{deviceGuid}/add-methods")]
+        public async Task<IActionResult> AddMethods(Guid deviceGuid, [FromBody] List<MethodDto> methods, CancellationToken cancellationToken)
+        {
+            var userId = GetUserId();
+            try
+            {
+                await _deviceService.AddMethods(deviceGuid, userId, methods, cancellationToken);
+                return Ok("Methods added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [Authorize, HttpDelete("{deviceGuid}")]
         public async Task<IActionResult> DeleteDevice(Guid deviceGuid, CancellationToken cancellationToken)
         {
@@ -95,6 +138,21 @@ namespace IotFlow.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [Authorize, HttpPost("{deviceGuid}/command/send")]
+        public async Task<IActionResult> SendCommand(Guid deviceGuid, [FromBody] MethodDto method, CancellationToken cancellationToken)
+        {
+            var userId = GetUserId();
+            try
+            {
+                await _deviceService.SendCommandAsync(deviceGuid, userId, method.MethodName, cancellationToken);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         private int GetUserId()
         {
             var userIdClaim = User.FindFirst("Id")?.Value;
