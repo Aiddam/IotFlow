@@ -10,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 using System.Text;
+using IotFlow.Abstractions.Interfaces.Services;
+using IotFlow.Models.DTO.Commands;
+using IotFlow.Services.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,11 +31,11 @@ builder.Services.AddCors(o =>
 
         if (builder.Environment.IsDevelopment())
         {
-            config.WithOrigins(builder.Configuration["Origins:Test"]!);
+            config.WithOrigins(builder.Configuration["Origins:Address"]!, builder.Configuration["MQTTOrigins:Address"]!);
         }
         else
         {
-            config.WithOrigins(builder.Configuration["ORIGIN_TEST"]!);
+            config.WithOrigins(builder.Configuration["ORIGIN_ADDRESS"]!, builder.Configuration["MQQT_ORIGIN_ADDRESS"]!);
         }
     });
 });
@@ -99,6 +102,7 @@ builder.Services.Configure<JwtConfiguration>(jwtConfigurations =>
 });
 builder.WebHost.UseUrls("http://0.0.0.0:5000");
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddHttpClient<IIotFlowApiService<CommandDto>, IotFlowApiService>();
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
