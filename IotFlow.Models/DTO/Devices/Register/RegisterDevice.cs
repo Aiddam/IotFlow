@@ -1,5 +1,4 @@
-﻿
-namespace IotFlow.Models.DTO.Devices
+﻿namespace IotFlow.Models.DTO.Devices.Register
 {
     public class RegisterDevice
     {

@@ -1,5 +1,4 @@
-﻿
-namespace IotFlow.Models.DTO.Devices
+﻿namespace IotFlow.Models.DTO.Devices.Update
 {
     public class UpdateDevice
     {
