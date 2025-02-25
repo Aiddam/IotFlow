@@ -4,11 +4,14 @@ using IotFlow.Abstractions.Interfaces.Services;
 using IotFlow.Models.DB;
 using IotFlow.Models.DTO.Commands;
 using IotFlow.Models.DTO.Devices;
+using IotFlow.Models.DTO.Devices.Register;
+using IotFlow.Models.DTO.Devices.Send;
+using IotFlow.Models.DTO.Devices.Update;
 using IotFlow.Models.Enum;
 
 namespace IotFlow.Services.Services
 {
-    public class DeviceService : IDeviceService<DeviceDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto>
+    public class DeviceService : IDeviceService<DeviceDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto, SendMethodParameterDto>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IDeviceDtoAdapter<DeviceDto, Device> _adapter;
@@ -240,13 +243,13 @@ namespace IotFlow.Services.Services
             await _unitOfWork.CommitAsync();
         }
 
-        public async Task SendCommandAsync(Guid deviceGuid, int userId, string command, CancellationToken cancellationToken = default)
+        public async Task SendCommandAsync(Guid deviceGuid, int userId, string command, ICollection<SendMethodParameterDto> parameters, CancellationToken cancellationToken = default)
         {
-            var device = await GetDeviceByGuid(deviceGuid, userId, cancellationToken);
             var commandDto = new CommandDto()
             {
                 Command = command,
-                DeviceGuid = deviceGuid.ToString()
+                DeviceGuid = deviceGuid.ToString(),
+                Parameters = parameters
             };
             await _iotFlowApiService.SendCommandAsync(commandDto, cancellationToken);
         }

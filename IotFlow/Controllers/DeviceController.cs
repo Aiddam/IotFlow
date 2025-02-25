@@ -1,5 +1,8 @@
 ﻿using IotFlow.Abstractions.Interfaces.Services;
 using IotFlow.Models.DTO.Devices;
+using IotFlow.Models.DTO.Devices.Register;
+using IotFlow.Models.DTO.Devices.Send;
+using IotFlow.Models.DTO.Devices.Update;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,8 +11,8 @@ namespace IotFlow.Controllers
     [Route("api/[controller]s")]
     public class DeviceController : BaseController
     {
-        private readonly IDeviceService<DeviceDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto> _deviceService;
-        public DeviceController(IDeviceService<DeviceDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto> deviceService)
+        private readonly IDeviceService<DeviceDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto, SendMethodParameterDto> _deviceService;
+        public DeviceController(IDeviceService<DeviceDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto, SendMethodParameterDto> deviceService)
         {
             _deviceService = deviceService;
         }
@@ -139,12 +142,12 @@ namespace IotFlow.Controllers
             }
         }
         [Authorize, HttpPost("{deviceGuid}/command/send")]
-        public async Task<IActionResult> SendCommand(Guid deviceGuid, [FromBody] MethodDto method, CancellationToken cancellationToken)
+        public async Task<IActionResult> SendCommand(Guid deviceGuid, [FromBody] SendMethodDto method, CancellationToken cancellationToken)
         {
             var userId = GetUserId();
             try
             {
-                await _deviceService.SendCommandAsync(deviceGuid, userId, method.MethodName, cancellationToken);
+                await _deviceService.SendCommandAsync(deviceGuid, userId, method.MethodName, method.Parameters, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)

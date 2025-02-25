@@ -1,7 +1,6 @@
-﻿
-namespace IotFlow.Models.DTO.Devices
+﻿namespace IotFlow.Models.DTO.Devices.Update
 {
-    public class RegisterDeviceDto : IDeviceDto
+    public class UpdateDeviceDto : IDeviceDto
     {
         public Guid DeviceGuid { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = string.Empty;
