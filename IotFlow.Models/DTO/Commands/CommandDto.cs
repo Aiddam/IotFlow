@@ -8,5 +8,6 @@ namespace IotFlow.Models.DTO.Commands
         public string Command {  get; set; } = string.Empty;
         public string DeviceGuid { get; set; } = string.Empty;
         public ICollection<SendMethodParameterDto>? Parameters { get; set; }
+        public Guid CorrelationId { get; set; }
     }
 }

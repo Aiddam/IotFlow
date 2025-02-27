@@ -3,6 +3,7 @@ using IotFlow.Models.DTO.Devices;
 using IotFlow.Models.DTO.Devices.Register;
 using IotFlow.Models.DTO.Devices.Send;
 using IotFlow.Models.DTO.Devices.Update;
+using IotFlow.Models.DTO.MethodRegister;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,16 +12,17 @@ namespace IotFlow.Controllers
     [Route("api/[controller]s")]
     public class DeviceController : BaseController
     {
-        private readonly IDeviceService<DeviceDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto, SendMethodParameterDto> _deviceService;
-        public DeviceController(IDeviceService<DeviceDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto, SendMethodParameterDto> deviceService)
+        private readonly IDeviceService<DeviceDto, DeviceWithIdDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto, SendMethodParameterDto> _deviceService;
+        private readonly IMethodRegisterService<HandleDeviceResponseDto, MethodRegisterResultDto> _methodRegisterService;
+        public DeviceController(IDeviceService<DeviceDto, DeviceWithIdDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto, SendMethodParameterDto> deviceService, IMethodRegisterService<HandleDeviceResponseDto, MethodRegisterResultDto> methodRegisterService)
         {
             _deviceService = deviceService;
+            _methodRegisterService = methodRegisterService;
         }
         [Authorize, HttpGet("{deviceGuid}")]
         public async Task<IActionResult> GetDevice(Guid deviceGuid, CancellationToken cancellationToken)
         {
             var userId = GetUserId();
-            await Console.Out.WriteLineAsync(userId.ToString());
             try
             {
                 var device = await _deviceService.GetDeviceByGuid(deviceGuid, userId, cancellationToken);
@@ -145,9 +147,10 @@ namespace IotFlow.Controllers
         public async Task<IActionResult> SendCommand(Guid deviceGuid, [FromBody] SendMethodDto method, CancellationToken cancellationToken)
         {
             var userId = GetUserId();
+            var correlationId = await _methodRegisterService.CreateCommandRegister(userId, deviceGuid, method.MethodName, cancellationToken);
             try
             {
-                await _deviceService.SendCommandAsync(deviceGuid, userId, method.MethodName, method.Parameters, cancellationToken);
+                await _deviceService.SendCommandAsync(deviceGuid, userId, method.MethodName, method.Parameters, correlationId, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)
@@ -155,17 +158,18 @@ namespace IotFlow.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        private int GetUserId()
+        [Authorize, HttpPost("{deviceGuid}/handle-response")]
+        public async Task<IActionResult> HandleResponse(Guid deviceGuid, [FromBody] HandleDeviceResponseDto responseDto, CancellationToken cancellationToken)
         {
-            var userIdClaim = User.FindFirst("Id")?.Value;
-
-            if (string.IsNullOrEmpty(userIdClaim))
+            try
             {
-                throw new Exception("User identifier is missing in the token.");
+                await _methodRegisterService.UpdateMethodResponseAsync(responseDto, cancellationToken);
+                return Ok("Response handled successfully.");
             }
-
-            return int.Parse(userIdClaim);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

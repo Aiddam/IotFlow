@@ -5,7 +5,7 @@ using IotFlow.Models.DTO.Devices;
 
 namespace IotFlow.Adapters.Adapters
 {
-    public class DeviceDtoAdapter : IDeviceDtoAdapter<DeviceDto, Device>
+    public class DeviceDtoAdapter : IDeviceDtoAdapter<DeviceDto, DeviceWithIdDto, Device>
     {
         private readonly IMapper _mapper;
         public DeviceDtoAdapter(IMapper mapper)
@@ -27,6 +27,12 @@ namespace IotFlow.Adapters.Adapters
                 mappedDevaices.Add(mappedDevice);
             }
             return Task.FromResult(mappedDevaices);
+        }
+
+        public Task<DeviceWithIdDto> GetDeviceWidhIdDtoAsync(Device device)
+        {
+            var mappedDevice = _mapper.Map<DeviceWithIdDto>(device);
+            return Task.FromResult(mappedDevice);
         }
     }
 }

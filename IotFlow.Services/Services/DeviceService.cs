@@ -11,13 +11,13 @@ using IotFlow.Models.Enum;
 
 namespace IotFlow.Services.Services
 {
-    public class DeviceService : IDeviceService<DeviceDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto, SendMethodParameterDto>
+    public class DeviceService : IDeviceService<DeviceDto, DeviceWithIdDto, RegisterDeviceDto, UpdateDeviceDto, MethodDto, DeviceAliveDto, SendMethodParameterDto>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IDeviceDtoAdapter<DeviceDto, Device> _adapter;
+        private readonly IDeviceDtoAdapter<DeviceDto, DeviceWithIdDto, Device> _adapter;
         private readonly IIotFlowApiService<CommandDto> _iotFlowApiService;
 
-        public DeviceService(IUnitOfWork unitOfWork, IDeviceDtoAdapter<DeviceDto, Device> adapter, IIotFlowApiService<CommandDto> iotFlowApiService)
+        public DeviceService(IUnitOfWork unitOfWork, IDeviceDtoAdapter<DeviceDto, DeviceWithIdDto, Device> adapter, IIotFlowApiService<CommandDto> iotFlowApiService)
         {
             _unitOfWork = unitOfWork;
             _adapter = adapter;
@@ -95,6 +95,17 @@ namespace IotFlow.Services.Services
                 throw new ArgumentException("Unable to read device");
             }
             return await _adapter.GetDeviceDtoAsync(firstDevice);
+        }
+        public async Task<DeviceWithIdDto> GetDeviceWithIdByGuid(Guid deviceGuid, int userId, CancellationToken cancellationToken = default)
+        {
+            var deviceRepository = await _unitOfWork.GetRepository<Device>();
+            var foundedDevices = await deviceRepository.ReadEntitiesByPredicate(device => deviceGuid == device.DeviceGuid && device.UserId == userId);
+            Device? firstDevice = foundedDevices.FirstOrDefault();
+            if (firstDevice == null)
+            {
+                throw new ArgumentException("Unable to read device");
+            }
+            return await _adapter.GetDeviceWidhIdDtoAsync(firstDevice);
         }
         public async Task<ICollection<DeviceDto>> GetDevices(int userId, CancellationToken cancellationToken = default)
         {
@@ -243,13 +254,14 @@ namespace IotFlow.Services.Services
             await _unitOfWork.CommitAsync();
         }
 
-        public async Task SendCommandAsync(Guid deviceGuid, int userId, string command, ICollection<SendMethodParameterDto> parameters, CancellationToken cancellationToken = default)
+        public async Task SendCommandAsync(Guid deviceGuid, int userId, string command, ICollection<SendMethodParameterDto> parameters, Guid correlationId, CancellationToken cancellationToken = default)
         {
             var commandDto = new CommandDto()
             {
                 Command = command,
                 DeviceGuid = deviceGuid.ToString(),
-                Parameters = parameters
+                Parameters = parameters,
+                CorrelationId = correlationId,
             };
             await _iotFlowApiService.SendCommandAsync(commandDto, cancellationToken);
         }

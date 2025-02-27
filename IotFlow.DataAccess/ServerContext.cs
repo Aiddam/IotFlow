@@ -15,6 +15,7 @@ namespace IotFlow.DataAccess
         public DbSet<Device> Devices { get; set; }
         public DbSet<DeviceMethod> DevicesMethods { get; set; }
         public DbSet<DeviceMethodParameter> DeviceMethodParameters { get; set; }
+        public DbSet<MethodRegister> MethodRegister { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(_configuration.GetConnectionString("SQLProviderConnectionString"));
@@ -33,6 +34,15 @@ namespace IotFlow.DataAccess
             modelBuilder.Entity<DeviceMethodParameter>()
                 .Property(p => p.ParameterType)
                 .HasConversion<string>();
+
+            modelBuilder.Entity<MethodRegister>()
+                .HasAlternateKey(d => d.CorrelationId);
+
+            modelBuilder.Entity<MethodRegister>()
+                .HasOne(mr => mr.Method)
+                .WithMany()
+                .HasForeignKey(mr => mr.MethodId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
