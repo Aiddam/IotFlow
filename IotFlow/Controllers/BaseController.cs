@@ -6,6 +6,16 @@ namespace IotFlow.Controllers
     [ApiController]
     public class BaseController : ControllerBase
     {
+        protected int GetUserId()
+        {
+            var userIdClaim = User.FindFirst("Id")?.Value;
 
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                throw new Exception("User identifier is missing in the token.");
+            }
+
+            return int.Parse(userIdClaim);
+        }
     }
 }

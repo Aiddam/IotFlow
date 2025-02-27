@@ -9,6 +9,7 @@ namespace IotFlow.Mappers
         public DeviceMapperProfile()
         {
             CreateMap<Device, DeviceDto>();
+            CreateMap<Device, DeviceWithIdDto>();
         }
     }
 }
